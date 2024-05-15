@@ -7,7 +7,7 @@ from urllib.parse import urljoin, urlparse
 
 def check_for_redirect(response):
     history = response.history
-    if history != []:
+    if history:
         raise requests.HTTPError
 
 
@@ -29,12 +29,12 @@ def download_image(response, filename, folder="images/"):
         file.write(response.content)
 
 
-def parse_book_page(book_response, id):
+def parse_book_page(book_response, book_id):
     soup = BeautifulSoup(book_response.text, 'lxml')
 
-    title_tag = soup.find('h1')
+    title_tag = soup.find("h1")
     title, author = title_tag.text.split(" :: ")
-    filename = f"{id}.{title}"
+    filename = f"{book_id}.{title}"
 
     image_tag = soup.find('div', class_="bookimage")
     image_tag = image_tag.find('img')
@@ -48,7 +48,7 @@ def parse_book_page(book_response, id):
     genres_tag = soup.find('span', class_="d_book")
     genres_tag = genres_tag.find_all("a")
 
-    book_data = {
+    book_information = {
         "title": title,
         "author": author,
         "comments": list(map(lambda x: x.text, comments_tag)),
@@ -57,9 +57,7 @@ def parse_book_page(book_response, id):
         "image_path": image_path,
         "filename": filename,
     }
-    return book_data
-
-
+    return book_information
 
 
 def main():
@@ -70,25 +68,25 @@ def main():
     parser.add_argument("--end_id", default=10, type=int, help="id после которого книги не скачиваются. Стандартное значение - 10.")
 
     args = parser.parse_args()
-    start_id = int(args.start_id)
-    end_id = int(args.end_id)
-    for id in range(start_id, end_id+1):
+    start_id = args.start_id
+    end_id = args.end_id
+    for book_id in range(start_id, end_id+1):
         payload = {
-            'id': id,
+            'id': book_id,
         }
         try:
             response = requests.get('https://tululu.org/txt.php', params=payload)
             response.raise_for_status()
             check_for_redirect(response)
 
-            book_url = f'https://tululu.org/b{id}/'
+            book_url = f'https://tululu.org/b{book_id}/'
             book_response = requests.get(book_url)
             book_response.raise_for_status()
+            check_for_redirect(book_response)
 
-            book_data = parse_book_page(book_response, id)
-            print(book_data)
-            download_txt(response, book_data["filename"])
-            download_image(book_data["image_response"], book_data["image_path"])
+            book_information = parse_book_page(book_response, book_id)
+            download_txt(response, book_information["filename"])
+            download_image(book_information["image_response"], book_information["image_path"])
         except requests.HTTPError:
             pass
 
