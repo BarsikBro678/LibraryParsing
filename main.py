@@ -4,6 +4,8 @@ import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 from urllib.parse import urljoin, urlparse
+import logging
+
 
 def check_for_redirect(response):
     history = response.history
@@ -89,6 +91,8 @@ def main():
             download_image(book_information["image_response"], book_information["image_path"])
         except requests.HTTPError:
             pass
+        except requests.ConnectionError:
+            logging.error(f"На сайте нет книги с id = {id}")
 
 if __name__ == '__main__':
     main()
