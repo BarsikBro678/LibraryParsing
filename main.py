@@ -42,7 +42,7 @@ def parse_book_page(book_response, book_id):
 
     image_tag = soup.find('div', class_="bookimage")
     image_tag = image_tag.find('img')
-    image_url = urljoin("https://tululu.org/", image_tag["src"])
+    image_url = urljoin(f"https://tululu.org/b{book_id}", image_tag["src"])
     image_parse = urlparse(image_url)
     image_path = image_parse.path.split("/")[-1]
     comments_tag = soup.find_all('div', class_="texts")
