@@ -42,8 +42,6 @@ def parse_book_page(book_response, book_id):
     image_tag = image_tag.find('img')
     image_url = urljoin("https://tululu.org/", image_tag["src"])
     image_parse = urlparse(image_url)
-    image_response = requests.get(image_url)
-    image_response.raise_for_status()
     image_path = image_parse.path.replace("/images", "").replace(".gif", "").replace("/shots", "").replace(".jpg", "")
 
     comments_tag = soup.find_all('div', class_="texts")
@@ -55,7 +53,7 @@ def parse_book_page(book_response, book_id):
         "author": author,
         "comments": list(map(lambda x: x.text, comments_tag)),
         "genres": list(map(lambda x: x.text, genres_tag)),
-        "image_response": image_response,
+        "image_url": image_url,
         "image_path": image_path,
         "filename": filename,
     }
