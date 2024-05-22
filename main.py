@@ -42,8 +42,7 @@ def parse_book_page(book_response, book_id):
     image_tag = image_tag.find('img')
     image_url = urljoin("https://tululu.org/", image_tag["src"])
     image_parse = urlparse(image_url)
-    image_path = image_parse.path.replace("/images", "").replace(".gif", "").replace("/shots", "").replace(".jpg", "")
-
+    image_path = image_parse.path.split("/")[-1]
     comments_tag = soup.find_all('div', class_="texts")
     genres_tag = soup.find('span', class_="d_book")
     genres_tag = genres_tag.find_all("a")
@@ -87,11 +86,11 @@ def main():
 
             book_information = parse_book_page(book_response, book_id)
             download_txt(response, book_information["filename"])
-            download_image(book_information["image_response"], book_information["image_path"])
+            download_image(book_information["image_url"], book_information["image_path"])
         except requests.HTTPError:
-            pass
-        except requests.ConnectionError:
             print(f"На сайте нет книги с id = {id}")
+        except requests.ConnectionError:
+            print("Ошибка подключения")
 
 
 if __name__ == '__main__':
