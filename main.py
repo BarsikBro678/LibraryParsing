@@ -1,10 +1,10 @@
-import argparse
 import os
-import requests
+import argparse
+
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
+import requests
 from urllib.parse import urljoin, urlparse
-import logging
 
 
 def check_for_redirect(response):
@@ -72,6 +72,7 @@ def main():
     args = parser.parse_args()
     start_id = args.start_id
     end_id = args.end_id
+
     for book_id in range(start_id, end_id+1):
         payload = {
             'id': book_id,
@@ -92,7 +93,8 @@ def main():
         except requests.HTTPError:
             pass
         except requests.ConnectionError:
-            logging.error(f"На сайте нет книги с id = {id}")
+            print(f"На сайте нет книги с id = {id}")
+
 
 if __name__ == '__main__':
     main()
