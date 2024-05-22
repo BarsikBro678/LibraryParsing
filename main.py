@@ -22,11 +22,13 @@ def download_txt(response, filename, folder='books/'):
         file.write(response.content)
 
 
-def download_image(response, filename, folder="images/"):
+def download_image(url, filename, folder="images/"):
     os.makedirs(folder, exist_ok=True)
     filename = sanitize_filename(filename)
     filename = filename.strip()
-    path = os.path.join(folder, f"{filename}.jpg")
+    response = requests.get(url)
+    response.raise_for_status()
+    path = os.path.join(folder, f"{filename}")
     with open(path, "wb") as file:
         file.write(response.content)
 
@@ -88,7 +90,7 @@ def main():
             download_txt(response, book_information["filename"])
             download_image(book_information["image_url"], book_information["image_path"])
         except requests.HTTPError:
-            print(f"На сайте нет книги с id = {id}")
+            print(f"На сайте нет книги с id = {book_id}")
         except requests.ConnectionError:
             print("Ошибка подключения")
 
