@@ -1,5 +1,6 @@
 import os
 import argparse
+import time
 
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
@@ -93,6 +94,7 @@ def main():
             print(f"На сайте нет книги с id = {book_id}")
         except requests.ConnectionError:
             print("Ошибка подключения")
+            time.sleep(10)
 
 
 if __name__ == '__main__':
