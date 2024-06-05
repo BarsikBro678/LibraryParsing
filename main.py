@@ -49,7 +49,7 @@ def parse_book_page(book_response, book_id):
     genres_tag = soup.find('span', class_="d_book")
     genres_tag = genres_tag.find_all("a")
 
-    book_information = {
+    book = {
         "title": title,
         "author": author,
         "comments": list(map(lambda x: x.text, comments_tag)),
@@ -58,7 +58,7 @@ def parse_book_page(book_response, book_id):
         "image_path": image_path,
         "filename": filename,
     }
-    return book_information
+    return book
 
 
 def main():
@@ -86,9 +86,9 @@ def main():
             book_response.raise_for_status()
             check_for_redirect(book_response)
 
-            book_information = parse_book_page(book_response, book_id)
-            download_txt(response, book_information["filename"])
-            download_image(book_information["image_url"], book_information["image_path"])
+            book = parse_book_page(book_response, book_id)
+            download_txt(response, book["filename"])
+            download_image(book["image_url"], book["image_path"])
         except requests.HTTPError:
             print(f"На сайте нет книги с id = {book_id}")
         except requests.ConnectionError:
