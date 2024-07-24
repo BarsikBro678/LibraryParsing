@@ -13,9 +13,9 @@ def main():
         response = requests.get(url)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "lxml")
-        books = soup.find_all(class_="d_book")
+        books = soup.select(".d_book")
         for num in range(len(books)):
-            book_tag = books[num].find("a")
+            book_tag = books[num].select_one("a")
             book_id = book_tag["href"]
             book_url = f'https://tululu.org/{book_id}'
             book_response = requests.get(book_url)
