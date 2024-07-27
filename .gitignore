@@ -2,3 +2,4 @@ books/
 images/
 .idea/
 books_args.json
+_pycache_/
