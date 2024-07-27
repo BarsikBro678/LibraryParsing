@@ -68,13 +68,13 @@ def main():
         description="Эта программа скачивает книги с сайта tululu.org",
     )
     parser.add_argument("--start_id", default=1, type=int, help="id начиная с которого скачиваются книги. Стандртное значение - 1.")
-    parser.add_argument("--end_id", default=10, type=int, help="id после которого книги не скачиваются. Стандартное значение - 10.")
+    parser.add_argument("--end_id", default=11, type=int, help="id после которого книги не скачиваются. Стандартное значение - 11.")
 
     args = parser.parse_args()
     start_id = args.start_id
     end_id = args.end_id
 
-    for book_id in range(start_id, end_id+1):
+    for book_id in range(start_id, end_id):
         payload = {
             'id': book_id,
         }

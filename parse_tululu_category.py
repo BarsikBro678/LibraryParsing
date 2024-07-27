@@ -22,10 +22,10 @@ def main():
     )
     parser.add_argument("--start_page", default=1, type=int,
                         help="Страница начиная с которой скачиваются книги о фантастике. Стандартное значение - 1.")
-    parser.add_argument("--end_page", default=10, type=int,
-                        help="Страница на которой книги уже не скачиваются. Стандартное значение - 10.")
+    parser.add_argument("--end_page", default=11, type=int,
+                        help="Страница на которой книги уже не скачиваются. Стандартное значение - 11.")
     parser.add_argument("--dest_folder", default="", type=str,
-                        help="Указывать ли путь до файла.")
+                        help="Путь к каталогу с результатами парсинга: картинкам, книгам, JSON.")
     parser.add_argument("--skip_imgs", action="store_true",
                         help="Не скачивать картинки.")
     parser.add_argument("--skip_txt", action="store_true",
