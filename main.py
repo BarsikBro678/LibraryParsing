@@ -58,6 +58,7 @@ def parse_book_page(book_response, book_id):
         "image_url": image_url,
         "image_path": image_path,
         "filename": filename,
+        "image_src": image_tag["src"],
     }
     return book
 
