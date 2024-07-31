@@ -1,6 +1,7 @@
 import os
 import argparse
 import json
+from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
@@ -46,24 +47,26 @@ def main():
         check_for_redirect(response)
         soup = BeautifulSoup(response.text, "lxml")
         books = soup.select(".d_book")
-        for num in range(len(books)):
-            book_tag = books[num].select_one("a")
-            book_id = book_tag["href"]
-            book_url = f'https://tululu.org/{book_id}'
+        for book_tag in books:
+            book_tag = book_tag.select_one("a")
+            book_url_part = book_tag["href"]
+            book_url = urljoin("https://tululu.org/", book_url_part)
             book_response = requests.get(book_url)
             book_response.raise_for_status()
             check_for_redirect(book_response)
-            book = parse_book_page(book_response, book_id[2:])
+            book = parse_book_page(book_response, book_url)
+            book_id = book_url_part[2:-1]
+            filename = f"{book_id}.{book['title']}"
             if not skip_txt:
-                download_txt(response, book["filename"], folder = f"{dest_folder}books/")
+                download_txt(response, filename, folder = f"{dest_folder}books/")
             if not skip_imgs:
                 download_image(book["image_url"], book["image_path"], folder = f"{dest_folder}images/")
-            book_args = {"title": book["title"].replace("\xa0", ""),
-                         "author": book["author"].replace("\xa0", ""),
-                         "img_src": book["image_src"].replace("\xa0", ""),
-                         "book_path": book["filename"].replace("\xa0", ""),
-                         "comments": list(map(lambda x: x.replace("\xa0", ""), book["comments"])),
-                         "genres": list(map(lambda x: x.replace("\xa0", ""), book["genres"])),
+            book_args = {"title": book["title"],
+                         "author": book["author"],
+                         "img_src": book["image_src"],
+                         "book_path": filename,
+                         "comments": book["comments"],
+                         "genres": book["genres"],
             }
             books_args.append(book_args)
     write_books_args(books_args, folder = dest_folder)

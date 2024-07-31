@@ -34,16 +34,15 @@ def download_image(url, filename, folder="images/"):
         file.write(response.content)
 
 
-def parse_book_page(book_response, book_id):
+def parse_book_page(book_response, book_url):
     soup = BeautifulSoup(book_response.text, 'lxml')
 
     title_tag = soup.find("h1")
     title, author = title_tag.text.split(" :: ")
-    filename = f"{book_id}.{title}"
 
     image_tag = soup.find('div', class_="bookimage")
     image_tag = image_tag.find('img')
-    image_url = urljoin(f"https://tululu.org/b{book_id}", image_tag["src"])
+    image_url = urljoin(book_url, image_tag["src"])
     image_parse = urlparse(image_url)
     image_path = image_parse.path.split("/")[-1]
     comments_tag = soup.find_all('div', class_="texts")
@@ -51,14 +50,13 @@ def parse_book_page(book_response, book_id):
     genres_tag = genres_tag.find_all("a")
 
     book = {
-        "title": title,
-        "author": author,
-        "comments": list(map(lambda x: x.text, comments_tag)),
-        "genres": list(map(lambda x: x.text, genres_tag)),
-        "image_url": image_url,
-        "image_path": image_path,
-        "filename": filename,
-        "image_src": image_tag["src"],
+        "title": title.replace("\xa0", ""),
+        "author": author.replace("\xa0", ""),
+        "comments": list(map(lambda x: x.text.replace("\xa0", ""), comments_tag)),
+        "genres": list(map(lambda x: x.text.replace("\xa0", ""), genres_tag)),
+        "image_url": image_url.replace("\xa0", ""),
+        "image_path": image_path.replace("\xa0", ""),
+        "image_src": image_tag["src"].replace("\xa0", ""),
     }
     return book
 
@@ -88,8 +86,9 @@ def main():
             book_response.raise_for_status()
             check_for_redirect(book_response)
 
-            book = parse_book_page(book_response, book_id)
-            download_txt(response, book["filename"])
+            book = parse_book_page(book_response, book_url)
+            filename = f"{book_id}.{book['title']}"
+            download_txt(response, filename)
             download_image(book["image_url"], book["image_path"])
         except requests.HTTPError:
             print(f"На сайте нет книги с id = {book_id}")
