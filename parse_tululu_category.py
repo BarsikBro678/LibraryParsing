@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 
-from main import download_txt, download_image, parse_book_page
+from download_all_books import download_txt, download_image, parse_book_page, check_for_redirect
 
 
 def write_books_args(books_args, filename="books_args", folder=""):
@@ -37,12 +37,13 @@ def main():
     skip_imgs = args.skip_imgs
     skip_txt = args.skip_txt
     books_args = []
-    if dest_folder != "":
+    if dest_folder:
         os.makedirs(dest_folder)
-    for page in range(start_page, end_page):
-        url = f"https://tululu.org/l55/{page}"
+    for page_num in range(start_page, end_page):
+        url = f"https://tululu.org/l55/{page_num}"
         response = requests.get(url)
         response.raise_for_status()
+        check_for_redirect(response)
         soup = BeautifulSoup(response.text, "lxml")
         books = soup.select(".d_book")
         for num in range(len(books)):
@@ -51,6 +52,7 @@ def main():
             book_url = f'https://tululu.org/{book_id}'
             book_response = requests.get(book_url)
             book_response.raise_for_status()
+            check_for_redirect(book_response)
             book = parse_book_page(book_response, book_id[2:])
             if not skip_txt:
                 download_txt(response, book["filename"], folder = f"{dest_folder}books/")
