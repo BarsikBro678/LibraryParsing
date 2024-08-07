@@ -2,19 +2,13 @@ import os
 import argparse
 import json
 from urllib.parse import urljoin
+import time
 
 import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 
 from download_all_books import download_txt, download_image, parse_book_page, check_for_redirect
-
-
-def write_books_args(books_args, filename="books_args", folder=""):
-    filename = sanitize_filename(filename)
-    filename = filename.strip()
-    with open(f"{folder}{filename}.json", "w", encoding="utf8") as file:
-        json.dump(books_args, file, ensure_ascii=False)
 
 
 def main():
@@ -38,8 +32,6 @@ def main():
     skip_imgs = args.skip_imgs
     skip_txt = args.skip_txt
     books_args = []
-    if dest_folder:
-        os.makedirs(dest_folder)
     for page_num in range(start_page, end_page):
         url = f"https://tululu.org/l55/{page_num}"
         response = requests.get(url)
@@ -47,29 +39,36 @@ def main():
         check_for_redirect(response)
         soup = BeautifulSoup(response.text, "lxml")
         books = soup.select(".d_book")
-        for book_tag in books:
-            book_tag = book_tag.select_one("a")
-            book_url_part = book_tag["href"]
-            book_url = urljoin("https://tululu.org/", book_url_part)
-            book_response = requests.get(book_url)
-            book_response.raise_for_status()
-            check_for_redirect(book_response)
-            book = parse_book_page(book_response, book_url)
-            book_id = book_url_part[2:-1]
-            filename = f"{book_id}.{book['title']}"
-            if not skip_txt:
-                download_txt(response, filename, folder = f"{dest_folder}books/")
-            if not skip_imgs:
-                download_image(book["image_url"], book["image_path"], folder = f"{dest_folder}images/")
-            book_args = {"title": book["title"],
-                         "author": book["author"],
-                         "img_src": book["image_src"],
-                         "book_path": filename,
-                         "comments": book["comments"],
-                         "genres": book["genres"],
-            }
-            books_args.append(book_args)
-    write_books_args(books_args, folder = dest_folder)
+        for book_num, book_tag in enumerate(books):
+            try:
+                book_tag = book_tag.select_one("a")
+                book_url_part = book_tag["href"]
+                book_url = urljoin(url, book_url_part)
+                book_response = requests.get(book_url)
+                book_response.raise_for_status()
+                check_for_redirect(book_response)
+                book = parse_book_page(book_response, book_url)
+                book_id = book_url_part[2:-1]
+                filename = f"{book_id}.{book['title']}"
+                if not skip_txt:
+                    download_txt(book_response, filename, folder = f"{dest_folder}books/")
+                if not skip_imgs:
+                    download_image(book["image_url"], book["image_path"], folder = f"{dest_folder}images/")
+                book_args = {"title": book["title"],
+                             "author": book["author"],
+                             "img_src": book["image_src"],
+                             "book_path": filename,
+                             "comments": book["comments"],
+                             "genres": book["genres"],
+                }
+                books_args.append(book_args)
+            except requests.exceptions.HTTPError:
+                print(f"Книга №{book_num} со страницы {page_num} не скачана")
+            except requests.exceptions.ConnectionError:
+                print("Ошибка соеденения")
+                time.sleep(10)
+    with open(f"{dest_folder}books.json", "w", encoding="utf8") as file:
+        json.dump(books_args, file, ensure_ascii=False)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 books/
 images/
 .idea/
-books_args.json
+books.json
 __pycache__/
