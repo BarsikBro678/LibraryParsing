@@ -40,14 +40,13 @@ def parse_book_page(book_response, book_url):
     title_tag = soup.find("h1")
     title, author = title_tag.text.split(" :: ")
 
-    image_tag = soup.find('div', class_="bookimage")
-    image_tag = image_tag.find('img')
+    image_tag = soup.select_one("div.bookimage img")
     image_url = urljoin(book_url, image_tag["src"])
     image_parse = urlparse(image_url)
     image_path = image_parse.path.split("/")[-1]
-    comments_tag = soup.find_all('div', class_="texts")
-    genres_tag = soup.find('span', class_="d_book")
-    genres_tag = genres_tag.find_all("a")
+    comments_tag = soup.select("div.texts")
+    genres_tag = soup.select_one("span.d_book")
+    genres_tag = genres_tag.select("a")
 
     book = {
         "title": title.replace("\xa0", ""),
