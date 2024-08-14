@@ -61,6 +61,7 @@ def main():
                                  "book_path": filename,
                                  "comments": book["comments"],
                                  "genres": book["genres"],
+                                 "image_path": f'{dest_folder}images/{book["image_path"]}',
                     }
                     books_args.append(book_args)
                 except requests.exceptions.HTTPError:
