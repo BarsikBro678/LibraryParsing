@@ -58,10 +58,10 @@ def main():
                     book_args = {"title": book["title"],
                                  "author": book["author"],
                                  "img_src": book["image_src"],
-                                 "book_path": filename,
                                  "comments": book["comments"],
                                  "genres": book["genres"],
                                  "image_path": f'{dest_folder}images/{book["image_path"]}',
+                                 "book_path": f'{dest_folder}books/{filename[:-1]}.txt'
                     }
                     books_args.append(book_args)
                 except requests.exceptions.HTTPError:
