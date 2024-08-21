@@ -51,8 +51,13 @@ def main():
                     book = parse_book_page(book_response, book_url)
                     book_id = book_url_part[2:-1]
                     filename = f"{book_id}.{book['title']}"
+                    payload = {
+                        "id": book_id,
+                    }
+                    text_url = "https://tululu.org/txt.php"
+                    text_response = requests.get(text_url, params=payload)
                     if not skip_txt:
-                        download_txt(book_response, filename, folder = f"{dest_folder}books/")
+                        download_txt(text_response, filename, folder = f"{dest_folder}books/")
                     if not skip_imgs:
                         download_image(book["image_url"], book["image_path"], folder = f"{dest_folder}images/")
                     book_args = {"title": book["title"],
