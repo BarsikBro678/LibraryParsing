@@ -66,7 +66,7 @@
 python render_website.py
 ```
 
-Адрес сайта -  http://127.0.0.1:5500/pages/index1.html
+Адрес сайта -  [http://127.0.0.1:5500/pages/index1.html](http://127.0.0.1:5500/pages/index1.html)
 
 ### Цель проекта
 
