@@ -7,8 +7,10 @@ from more_itertools import chunked
 from livereload import Server
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-
-os.makedirs("pages/")
+try:
+    os.makedirs("pages/")
+except:
+    pass
 
 
 def reload():
@@ -36,4 +38,4 @@ def reload():
 
 server = Server()
 server.watch('template.html', reload)
-server.serve(root='.')
+server.serve(root='.', default_filename="pages/index1.html")
