@@ -68,6 +68,11 @@ python render_website.py
 
 Адрес сайта -  [http://127.0.0.1:5500/pages/index1.html](http://127.0.0.1:5500/pages/index1.html)
 
+
+## Github Pages
+
+Ссылка на проект - [https://barsikbro678.github.io/LibraryParsing/](https://barsikbro678.github.io/LibraryParsing/).
+
 ### Цель проекта
 
 Код написан в образовательных целях на онлайн-курсе для веб-разработчиков [dvmn.org](https://dvmn.org/).
