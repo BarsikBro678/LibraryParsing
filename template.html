@@ -3,27 +3,33 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="../library/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/bootstrap.min.css">
+    <link rel="icon" href="../static/lg.png" type="image/png" size="50x50">
+    <title>Сайт с книгами - страница {{current_page}}</title>
   </head>
   <body>
   <div class="container">
-      <nav aria-label="Page navigation example">
-        <ul class="pagination mt-3">
-          {% if current_page > 1 %}
-            <li class="page-item"><a class="page-link" href="index{{current_page-1}}.html">Previous</a></li>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination mt-3">
+        {% if current_page > 1 %}
+          <li class="page-item"><a class="page-link" href="index{{current_page-1}}.html">Previous</a></li>
+        {% else %}
+          <li class="page-item disabled"><a class="page-link" href="index{{current_page-1}}.html">Previous</a></li>
+        {% endif %}
+        {% for page_num in range(1, pages_all) %}
+          {% if page_num == current_page %}
+            <li class="page-item active" aria-current="page"><a class="page-link" href="index{{page_num}}.html">{{page_num}} <span class="sr-only">(current)</span></a></li>
           {% else %}
-            <li class="page-item disabled"><a class="page-link" href="index{{current_page-1}}.html">Previous</a></li>
-          {% endif %}
-          {% for page_num in range(1, pages_all) %}
             <li class="page-item"><a class="page-link" href="index{{page_num}}.html">{{page_num}}</a></li>
-          {% endfor %}
-          {% if current_page < pages_all - 1 %}
-            <li class="page-item"><a class="page-link" href="index{{current_page+1}}.html">Next</a></li>
-          {% else %}
-            <li class="page-item disabled"><a class="page-link" href="index{{current_page+1}}.html">Next</a></li>
           {% endif %}
-        </ul>
-      </nav>
+        {% endfor %}
+        {% if current_page < pages_all - 1 %}
+          <li class="page-item"><a class="page-link" href="index{{current_page+1}}.html">Next</a></li>
+        {% else %}
+          <li class="page-item disabled"><a class="page-link" href="index{{current_page+1}}.html">Next</a></li>
+        {% endif %}
+      </ul>
+    </nav>
     {% for book_pair in books %}
       <div class="row">
         {% for book in book_pair %}
@@ -31,7 +37,7 @@
             <div class="card mb-3" style="max-width: 540px;">
               <div class="row no-gutters">
                 <div class="col-md-4">
-                  <img src="../{{book.image_path}}" class="card-img" alt="...">
+                  <img src="../media/{{book.image_path}}" class="card-img" alt="...">
                 </div>
                 <div class="col-md-8">
                   <div class="card-body">
@@ -40,7 +46,7 @@
                     {% for genre in book.genres %}
                       <span class="badge badge-light">{{genre}}</span>
                     {% endfor %}
-                    <p class="card-text"><small class="text-muted"><a href="../{{book.book_path}}">Читать</a></small></p>
+                    <h3 class="card-text"><small class="text-muted"><a href="../media/{{ book.book_path | urlencode }}" target="_blank">Читать</a></small></h3>
                   </div>
                 </div>
               </div>
@@ -50,6 +56,6 @@
       </div>
     {% endfor %}
   </div>
-  <script src="../library/slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+  <script src="../static/slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="../static/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
   </body>

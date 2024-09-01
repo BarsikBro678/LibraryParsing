@@ -1,22 +1,17 @@
 import json
-from http.server import HTTPServer, SimpleHTTPRequestHandler
 import os
-import math
 
 from more_itertools import chunked
 from livereload import Server
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-try:
-    os.makedirs("pages/")
-except:
-    pass
+
+BOOKS_IN_PAGE = 20
 
 
 def reload():
-    with open("books.json", "r", encoding="utf8") as file:
-        books_json = file.read()
-    books = json.loads(books_json)
+    with open(f"books.json", "r", encoding="utf8") as file:
+        books = json.load(file)
 
     env = Environment(
         loader=FileSystemLoader('.'),
@@ -25,17 +20,25 @@ def reload():
 
     template = env.get_template('template.html')
 
-    books_pages = list(chunked(books, 20))
-    for page_num, books_page in enumerate(books_pages):
+    pages_with_books = list(chunked(books, BOOKS_IN_PAGE))
+
+    for page_num, books_page in enumerate(pages_with_books, start=1):
         rendered_page = template.render(
             books=list(chunked(books_page, 2)),
-            pages_all=len(books_pages)+1,
-            current_page=page_num+1,
+            pages_all=len(pages_with_books)+1,
+            current_page=page_num,
         )
-        with open(f'pages/index{page_num+1}.html', 'w', encoding="utf8") as file:
+        with open(f'pages/index{page_num}.html', 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
 
-server = Server()
-server.watch('template.html', reload)
-server.serve(root='.', default_filename="pages/index1.html")
+def main():
+    reload()
+    os.makedirs("pages/", exist_ok=True)
+    server = Server()
+    server.watch('template.html', reload)
+    server.serve(root='.', default_filename="pages/index1.html")
+
+
+if __name__ == "__main__":
+    main()

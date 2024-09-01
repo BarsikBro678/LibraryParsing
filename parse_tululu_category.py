@@ -25,12 +25,15 @@ def main():
                         help="Не скачивать картинки.")
     parser.add_argument("--skip_txt", action="store_true",
                         help="Не скачивать книги.")
+    parser.add_argument("--books_data_name", default="books",
+                        help="Задать имя файла с данными от книг")
     args = parser.parse_args()
     start_page = args.start_page
     end_page = args.end_page
     dest_folder = args.dest_folder
     skip_imgs = args.skip_imgs
     skip_txt = args.skip_txt
+    books_data_name = args.books_data_name
     books_args = []
     for page_num in range(start_page, end_page):
         try:
@@ -56,6 +59,7 @@ def main():
                     }
                     text_url = "https://tululu.org/txt.php"
                     text_response = requests.get(text_url, params=payload)
+                    check_for_redirect(text_response)
                     if not skip_txt:
                         download_txt(text_response, filename, folder = f"{dest_folder}books/")
                     if not skip_imgs:
@@ -79,7 +83,7 @@ def main():
         except requests.exceptions.ConnectionError:
             print("Ошибка подключения")
             time.sleep(10)
-    with open(f"{dest_folder}books.json", "w", encoding="utf8") as file:
+    with open(f"{dest_folder}{books_data_name}.json", "w", encoding="utf8") as file:
         json.dump(books_args, file, ensure_ascii=False)
 
 

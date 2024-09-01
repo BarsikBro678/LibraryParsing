@@ -59,6 +59,10 @@
 
 ```python parse_tululu_category.py --skip_txt```
 
+`--books_data_name`: Задать имя файлу с информацией о книгах
+
+```python parse_tululu_category.py --boks_data_name b```
+
 # Сайт с книгами
 
 В файле `render_website.py` можно запустить сайт по каманде в терминале:
@@ -72,6 +76,12 @@ python render_website.py
 ## Github Pages
 
 Ссылка на проект - [https://barsikbro678.github.io/LibraryParsing/](https://barsikbro678.github.io/LibraryParsing/).
+
+## Открыть сайт на компьютере
+
+Для открытия сайта откройте в проводнике проект и зайдите в папку pages.
+
+В этой папке выберете файл idnex1.html и нажмите по нему 2 раза.
 
 ### Цель проекта
 
